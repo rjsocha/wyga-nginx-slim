@@ -91,7 +91,7 @@ do
   export $arg
   ARGS+=( "--build-arg" "${arg}" )
 done 
-
+exit 
 exec 101>&1 102>&2
 if [[ -z ${NOLOG:-} ]]
 then
