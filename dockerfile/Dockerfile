@@ -39,6 +39,7 @@ RUN rm -rf /etc/group- /etc/passwd- /etc/shadow- /lib/apk /lib/firmware /lib/mde
 FROM scratch
 COPY --from=mold / /
 EXPOSE 80
+ENV PATH=/bin:/sbin:/usr/bin:/usr/sbin
 STOPSIGNAL SIGQUIT
 ENTRYPOINT [ "/entrypoint.sh" ]
 CMD ["nginx", "-g", "daemon off;"]
