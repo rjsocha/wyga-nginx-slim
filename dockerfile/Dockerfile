@@ -44,5 +44,5 @@ COPY --from=mold / /
 EXPOSE 80
 ENV PATH=/bin:/sbin:/usr/bin:/usr/sbin
 STOPSIGNAL SIGQUIT
-ENTRYPOINT [ "/entrypoint.sh" ]
+ENTRYPOINT [ "/entrypoint/nginx-slim" ]
 CMD ["nginx", "-g", "daemon off;"]
