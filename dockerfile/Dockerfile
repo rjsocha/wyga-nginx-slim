@@ -14,17 +14,20 @@ RUN ./configure --with-zlib=./zlib-${ZLIB} --with-pcre=./pcre2-${PCRE} --prefix=
 RUN make
 RUN strip -x objs/nginx
 RUN make install
+WORKDIR /metadata
+RUN echo -n "${VERSION}" >"version"
 FROM alpine:3 AS mold
 COPY --from=build /build/objs/nginx /usr/sbin/nginx
 RUN apk --no-cache -U upgrade
 RUN apk del zlib ssl_client scanelf musl-utils libssl3 libcrypto3 libc-utils ca-certificates-bundle alpine-keys apk-tools
-COPY --chmod=755 entrypoint.sh /entrypoint.sh
+COPY --chmod=755 entrypoint.sh /entrypoint/nginx-slim
 COPY --chmod=755 env-conf /bin/env-conf
 RUN mkdir -m 755 -p /etc/nginx /etc/nginx/stream.d /etc/nginx/nginx.d /etc/nginx/conf.d /var/cache/nginx /var/log/nginx
 RUN ln -sf /dev/stdout /var/log/nginx/access.log && ln -sf /dev/stderr /var/log/nginx/error.log
 COPY --from=build /etc/nginx/fastcgi.conf /etc/nginx/fastcgi_params /etc/nginx
 COPY --from=build /etc/nginx/mime.types /etc/nginx/scgi_params /etc/nginx/uwsgi_params /etc/nginx
 COPY --from=build /etc/nginx/html /usr/share/nginx/html/
+COPY --from=build /metadata /metadata/nginx/
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY default.conf /etc/nginx/conf.d/default.conf
 RUN addgroup -S nginx 
@@ -41,5 +44,5 @@ COPY --from=mold / /
 EXPOSE 80
 ENV PATH=/bin:/sbin:/usr/bin:/usr/sbin
 STOPSIGNAL SIGQUIT
-ENTRYPOINT [ "/entrypoint.sh" ]
+ENTRYPOINT [ "/entrypoint/nginx-slim" ]
 CMD ["nginx", "-g", "daemon off;"]
