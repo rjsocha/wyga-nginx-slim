@@ -1,0 +1,16 @@
+if nv="$(docker run --rm --pull always -q "${UPSTREAM}" nginx -v 2>&1 1>/dev/null | cut -d: -f2 | cut -d/ -f2)"
+then
+  if [[ ${nv} =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+  then
+      MAJOR_VERSION="${nv%.*}"
+      MINOR_VERSION="${nv##*.}"
+      VERSION="${nv}"
+      shadow-text 3 "NGINX ${nv}"
+  else
+    printf -- "ERROR: unable to parse upstream NGINX version ...\n"
+    exit 100
+  fi
+else
+  printf -- "ERROR: failed to retrieve nginx version ...\n"
+  exit 100
+fi
