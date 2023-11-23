@@ -35,8 +35,10 @@ RUN adduser -SDH \
   -g nginx \
    nginx && addgroup nginx www-data
 RUN rm -rf /etc/group- /etc/passwd- /etc/shadow- /lib/apk /lib/firmware /lib/mdev rm /lib/modules-load.d /lib/sysctl.d /etc/sysctl.conf /etc/udhcpd.conf /media /mnt /opt /srv /var/spool /var/opt /var/mail /var/cache/apk /usr/sbin/nginx-debug /etc/init.d /etc/apk /etc/logrotate.d  /etc/modprobe.d /etc/modules-load.d /etc/network /etc/opt /etc/periodic /etc/secfixes.d /etc/ssl /etc/sysctl.d /home /var/lib/misc /var/lib/udhcpd  /usr/lib/modules-load.d /etc/conf.d /etc/crontabs /etc/profile.d /etc/inittab  /etc/motd /etc/fstab /usr/share/licenses /usr/share/man /usr/share/misc /usr/share/udhcpc /docker-entrypoint.sh /docker-entrypoint.d /usr/local/bin/envsubst /etc/busybox-paths.d /usr/local
+
 FROM scratch
 COPY --from=mold / /
 EXPOSE 80
+STOPSIGNAL SIGQUIT
 ENTRYPOINT [ "/entrypoint.sh" ]
 CMD ["nginx", "-g", "daemon off;"]
