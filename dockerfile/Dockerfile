@@ -20,7 +20,7 @@ FROM alpine:3 AS mold
 COPY --from=build /build/objs/nginx /usr/sbin/nginx
 RUN apk --no-cache -U upgrade
 RUN apk del zlib ssl_client scanelf musl-utils libssl3 libcrypto3 libc-utils ca-certificates-bundle alpine-keys apk-tools
-COPY --chmod=755 entrypoint.sh /entrypoint.sh
+COPY --chmod=755 entrypoint.sh /entrypoint/nginx-slim
 COPY --chmod=755 env-conf /bin/env-conf
 RUN mkdir -m 755 -p /etc/nginx /etc/nginx/stream.d /etc/nginx/nginx.d /etc/nginx/conf.d /var/cache/nginx /var/log/nginx
 RUN ln -sf /dev/stdout /var/log/nginx/access.log && ln -sf /dev/stderr /var/log/nginx/error.log
