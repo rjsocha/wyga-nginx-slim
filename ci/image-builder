@@ -4,6 +4,7 @@ set -o pipefail
 source "config.ci"
 
 BASE=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+W=16
 
 if [[ -z ${UPSTREAM:-} ]]
 then
@@ -46,11 +47,10 @@ fi
 
 source "${NAME}.hook"
 
-echo "UPSTREAM:   ${UPSTREAM}"
-echo "VERSION:    ${VERSION}"
-echo "CONTEXT:    ${CONTEXT}"
-echo "DOCKERFILE: ${DOCKERFILE}"
-echo "PLATFORMS:  ${PLATFORMS}"
+printf -- "%-${W}.${W}s %s\n" "UPSTREAM:"   "${UPSTREAM}"
+printf -- "%-${W}.${W}s %s\n" "CONTEXT:"    "${CONTEXT}"
+printf -- "%-${W}.${W}s %s\n" "DOCKERFILE:" "${DOCKERFILE}"
+printf -- "%-${W}.${W}s %s\n" "PLATFORMS:"  "${PLATFORMS}"
 
 IMAGE=()
 
@@ -59,12 +59,14 @@ do
   if [[ ${tag::1} == "@" ]]
   then
     tag="${tag:1}"
+    env="${tag}"
     if ! [[ -v ${tag} ]]
     then
       printf -- "ERROR: undefined variable '%s' referenced as tag ...\n" "${tag}"
       exit 201
     fi
     tag="${!tag}"
+    printf -- "%-${W}.${W}s %s\n" "${env}:"  "${tag}"
   fi
   if [[ -z ${CI_REGISTRY_IMAGE:-} ]]
   then

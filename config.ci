@@ -1,9 +1,9 @@
 export NAME="nginx-slim"
 
-export UPSTREAM="${NGINX_UPSTREAM:-nginx:stable-alpine-slim}"
+export UPSTREAM="stable"
 
 export BUILD_ARGS="USTREAM VERSION"
-export TAGS="latest @MAJOR_VERSION @VERSION"
+export TAGS="latest @VERSION @MAJOR_VERSION"
 export PLATFORMS="${PLATFORMS:-linux/amd64,linux/arm64}"
 export DOCKER_BUILDER="multiplatform-builder"
 

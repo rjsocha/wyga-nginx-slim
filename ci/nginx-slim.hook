@@ -1,7 +1,8 @@
-if nv="$(docker run --rm --pull always -q "${UPSTREAM}" nginx -v 2>&1 1>/dev/null | cut -d: -f2 | cut -d/ -f2)"
+if nv="$(curl -fs https://version.nginx.com/nginx/${UPSTREAM})"
 then
-  if [[ ${nv} =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+  if [[ ${nv} =~ ^[0-9]+\.[0-9]+\.[0-9]+-.$ ]]
   then
+      nv="${nv%-*}"
       MAJOR_VERSION="${nv%.*}"
       MINOR_VERSION="${nv##*.}"
       VERSION="${nv}"
