@@ -80,7 +80,7 @@ do
   TAG+=( "-t" "${image}" )
   if [[ -n ${DOCKER_IO_USER:-} ]]
   then
-    image="${CI_PROJECT_PATH}:${UPSTREAM}"
+    image="${CI_PROJECT_PATH}:${tag}"
     DOCKERIO+=( "${image}" )
     TAG+=( "-t" "${image}" )
   fi
@@ -98,7 +98,7 @@ do
   export $arg
   ARGS+=( "--build-arg" "${arg}" )
 done 
-exit
+
 exec 101>&1 102>&2
 if [[ -z ${NOLOG:-} ]]
 then
