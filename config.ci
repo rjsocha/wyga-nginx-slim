@@ -2,12 +2,12 @@ export NAME="nginx-slim"
 
 export UPSTREAM="${NGINX_UPSTREAM:-nginx:stable-alpine-slim}"
 
-export BUILD_ARGS="REGISTRY USTREAM VERSION"
+export BUILD_ARGS="USTREAM VERSION"
 export TAGS="latest @MAJOR_VERSION @VERSION"
 export PLATFORMS="${PLATFORMS:-linux/amd64,linux/arm64}"
 export DOCKER_BUILDER="multiplatform-builder"
 
-OUTPUT_IMAGE="registry,compression=gzip,compression-level=9"
+OUTPUT_IMAGE="type=image,push=true,compression=gzip,compression-level=9"
 OUTPUT_LOCAL="type=docker,compression=gzip,compression-level=9"
 
 BUILDX_CONFIG=()
