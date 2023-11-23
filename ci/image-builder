@@ -53,8 +53,9 @@ printf -- "%-${W}.${W}s %s\n" "DOCKERFILE:" "${DOCKERFILE}"
 printf -- "%-${W}.${W}s %s\n" "PLATFORMS:"  "${PLATFORMS}"
 
 IMAGE=()
+DOCKERIO=()
+TAG=()
 
-printf -- "Building:\n"
 for tag in ${TAGS}
 do
   if [[ ${tag::1} == "@" ]]
@@ -75,14 +76,20 @@ do
   else
     image="${CI_REGISTRY_IMAGE}:${tag}"
   fi
-  printf -- " %s\n" "${image}"
-  IMAGE+=( "-t" "${image}" )
+  IMAGE+=( "${image}" )
+  TAG+=( "-t" "${image}" )
   if [[ -n ${DOCKER_IO_USER:-} ]]
   then
     image="${CI_PROJECT_PATH}:${UPSTREAM}"
-    printf -- " %s\n" "${image}"
-    IMAGE+=( "-t" "${image}" )
+    DOCKERIO+=( "${image}" )
+    TAG+=( "-t" "${image}" )
   fi
+done
+
+printf -- "Building:\n"
+for image in ${IMAGE[@]} ${DOCKERIO[@]}
+do
+  printf -- " %s\n" "${image}"
 done
 
 ARGS=()
@@ -91,7 +98,7 @@ do
   export $arg
   ARGS+=( "--build-arg" "${arg}" )
 done 
-exit 
+exit
 exec 101>&1 102>&2
 if [[ -z ${NOLOG:-} ]]
 then
@@ -104,7 +111,7 @@ then
 fi
 
 rc=0
-docker buildx build ${BUILDX_CONFIG[@]} ${IMAGE[@]} --pull ${ARGS[@]} -f "${DOCKERFILE}" "${CONTEXT}" || rc=1
+docker buildx build ${BUILDX_CONFIG[@]} ${TAG[@]} ${ARGS[@]} -f "${DOCKERFILE}" "${CONTEXT}" || rc=1
 exec 1>&101 2>&102
 if [[ ${rc} -eq 0 ]]
 then
