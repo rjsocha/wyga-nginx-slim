@@ -16,6 +16,7 @@ RUN strip -x objs/nginx
 RUN make install
 WORKDIR /metadata
 RUN echo -n "${VERSION}" >"version"
+
 FROM alpine:3 AS mold
 COPY --from=build /build/objs/nginx /usr/sbin/nginx
 RUN apk --no-cache -U upgrade
@@ -27,7 +28,7 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log && ln -sf /dev/stderr /var/log/
 COPY --from=build /etc/nginx/fastcgi.conf /etc/nginx/fastcgi_params /etc/nginx
 COPY --from=build /etc/nginx/mime.types /etc/nginx/scgi_params /etc/nginx/uwsgi_params /etc/nginx
 COPY --from=build /etc/nginx/html /usr/share/nginx/html/
-COPY --from=build /metadata /metadata/nginx/
+COPY --from=build /metadata /.metadata/nginx/
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY default.conf /etc/nginx/conf.d/default.conf
 RUN addgroup -S nginx 
