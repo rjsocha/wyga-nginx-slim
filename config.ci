@@ -19,6 +19,7 @@ BUILDX_CONFIG+=( "--no-cache --pull" )
 
 if [[ -z ${CI_REGISTRY_IMAGE:-} ]]
 then
+  CI_REGISTRY_IMAGE="${NAME}"
   BUILDX_CONFIG+=( "--output" "${OUTPUT_LOCAL}" )
   NOLOG=true
 else

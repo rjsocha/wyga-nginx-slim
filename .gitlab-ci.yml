@@ -1,26 +1,30 @@
 #::PROJECT:CI:NGINX-SLIM
 default:
+  image: wyga/docker-shell:latest
+  services:
+    - docker:dind
   tags:
-    - shell
+    - docker-in-docker
+
+variables:
+  DOCKER_TLS_CERTDIR: "/certs"
+  DOCKER_CREATE_CONTEXT: 1
 
 stages:
   - builder
 
-Nginx Slim Builder:
+Image Builder:
   stage: builder
   variables:
     GIT_DEPTH: 1
   before_script:
     - ci/ci-setup-environment
-    - export PATH=$PWD/ci:$PWD:${PATH}
   script:
-    - ci-builder
-  after_script:
-    - ci/ci-cleanup-environment
+    - ./ci-builder
   artifacts:
-    name: "nginx-slim-build-log"
+    name: "build-artifacts-${CI_PROJECT_NAME}"
     paths:
-      - .ci/
+      - .artifacts
     expire_in: 1 week
     when: always
   rules:
