@@ -1,6 +1,6 @@
 FROM alpine:3 AS build
 ARG VERSION
-ARG ZLIB=1.3
+ARG ZLIB=1.3.1
 ARG PCRE=10.42
 WORKDIR /build
 ADD https://nginx.org/download/nginx-${VERSION}.tar.gz nginx.tar.gz
