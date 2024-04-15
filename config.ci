@@ -1,6 +1,6 @@
 export NAME="nginx-slim"
 
-export UPSTREAM="stable"
+export UPSTREAM="mainline"
 
 export BUILD_ARGS="USTREAM VERSION"
 export TAGS="latest @VERSION @MAJOR_VERSION"
