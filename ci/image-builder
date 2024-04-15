@@ -1,9 +1,7 @@
 #!/bin/bash
-set -eu
-set -o pipefail
-source "config.ci"
+set -euo pipefail
+source config.ci
 
-BASE=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 W=16
 
 if [[ -z ${UPSTREAM:-} ]]
@@ -14,24 +12,7 @@ fi
 
 CONTEXT="context"
 DOCKERFILE="dockerfile/Dockerfile"
-CI_LOGS=".ci/log"
-
-# Locate project root directory
-while [[ ! -f .gitlab-ci.yml ]]
-do
-  cd ..
-  if [[ $(pwd) == "/" ]]
-  then
-    printf -- "ERROR: Unable to locate the project's root folder ...\n"
-    exit 100
-  fi
-done
-if ! grep -q "#::PROJECT:CI:${NAME^^}" ".gitlab-ci.yml"
-then
-  printf -- "ERROR: Unable to locate the project's root folder (incorrect .gitlab-ci.yml file) ...\n"
-  exit 100
-fi
-export PATH="$(pwd)/ci:$(pwd):${PATH}"
+CI_LOG=".artifacts/log"
 
 if ! [[ -d ${CONTEXT} ]]
 then
@@ -70,19 +51,12 @@ do
     tag="${!tag}"
     printf -- "%-${W}.${W}s %s\n" "${env}:"  "${tag}"
   fi
-  if [[ -z ${CI_REGISTRY_IMAGE:-} ]]
+  IMAGE+=( "${CI_REGISTRY_IMAGE}:${tag}" )
+  TAG+=( "-t" "${CI_REGISTRY_IMAGE}:${tag}" )
+  if [[ -n ${DOCKER_IO_USER:-} ]] && [[ -n ${DOCKER_IO_PATH:-} ]] && [[ -z ${NODOCKERIO:-} ]]
   then
-    image="${NAME}:${tag}"
-  else
-    image="${CI_REGISTRY_IMAGE}:${tag}"
-  fi
-  IMAGE+=( "${image}" )
-  TAG+=( "-t" "${image}" )
-  if [[ -n ${DOCKER_IO_USER:-} ]]
-  then
-    image="${CI_PROJECT_PATH}:${tag}"
-    DOCKERIO+=( "${image}" )
-    TAG+=( "-t" "${image}" )
+    DOCKERIO+=( "${DOCKER_IO_PATH}/${NAME,,}:${tag}" )
+    TAG+=( "-t" "${DOCKER_IO_PATH}/${NAME,,}:${tag}" )
   fi
 done
 
@@ -91,6 +65,8 @@ for image in ${IMAGE[@]} ${DOCKERIO[@]}
 do
   printf -- " %s\n" "${image}"
 done
+
+[[ -z ${SKIPBUILD:-} ]] || exit 0
 
 ARGS=()
 for arg in ${BUILD_ARGS:-}
@@ -102,12 +78,12 @@ done
 exec 101>&1 102>&2
 if [[ -z ${NOLOG:-} ]]
 then
-  if ! mkdir -p "${CI_LOGS}"
+  if ! mkdir -p "${CI_LOG}"
   then
     printf -- "ERROR: Unable to create LOG directory ...\n"
     exit 100
   fi
-  exec >"${CI_LOGS}/build-${NAME,,}.txt" 2>&1
+  exec >"${CI_LOG}/build-${NAME,,}.txt" 2>&1
 fi
 
 rc=0

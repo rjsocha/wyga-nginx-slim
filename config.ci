@@ -1,6 +1,6 @@
 export NAME="nginx-slim"
 
-export UPSTREAM="mainline"
+export UPSTREAM="stable"
 
 export BUILD_ARGS="USTREAM VERSION"
 export TAGS="latest @VERSION @MAJOR_VERSION"
@@ -15,10 +15,11 @@ BUILDX_CONFIG+=( "--builder" "${DOCKER_BUILDER}" )
 BUILDX_CONFIG+=( "--platform" "${PLATFORMS}" )
 BUILDX_CONFIG+=( "--provenance" "false" )
 BUILDX_CONFIG+=( "--progress" "plain" )
-BUILDX_CONFIG+=( "--no-cache --pull" )
+BUILDX_CONFIG+=( "--pull" )
 
 if [[ -z ${CI_REGISTRY_IMAGE:-} ]]
 then
+  CI_REGISTRY_IMAGE="${NAME}"
   BUILDX_CONFIG+=( "--output" "${OUTPUT_LOCAL}" )
   NOLOG=true
 else

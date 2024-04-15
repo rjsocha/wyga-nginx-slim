@@ -1,4 +1,4 @@
 #!/bin/bash
-set -eu
-source "config.ci"
-ci/image-builder
+set -euo pipefail
+source config.ci
+image-builder
