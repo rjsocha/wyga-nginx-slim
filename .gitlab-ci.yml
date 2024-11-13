@@ -1,6 +1,6 @@
 include:
   - project: ci/hub
-    ref:     v1.x
+    ref:     v2.x
     file:    image-builder.yaml
 
 stages:
