@@ -1,7 +1,7 @@
 FROM alpine:3 AS build
 ARG VERSION
 ARG ZLIB=1.3.1
-ARG PCRE=10.42
+ARG PCRE=10.45
 WORKDIR /build
 ADD https://nginx.org/download/nginx-${VERSION}.tar.gz nginx.tar.gz
 ADD https://github.com/PCRE2Project/pcre2/releases/download/pcre2-${PCRE}/pcre2-${PCRE}.tar.gz pcre.tar.gz
